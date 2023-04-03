@@ -1,0 +1,6 @@
+# Ignore object files and executables
+*.o
+*.out
+
+# Ignore project build directory
+build/

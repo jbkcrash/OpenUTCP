@@ -1,9 +1,9 @@
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
-SOURCES=main.cpp arphandler.cpp sockets.cpp tcphandshake.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=myprogram
+SOURCES=./src/main.cpp ./src/arphandler.cpp ./src/sockets.cpp ./src/tcphandshake.cpp
+OBJECTS=$(SOURCES:%.cpp=./build/%.o)
+EXECUTABLE=utcpEcho
 
 all: $(SOURCES) $(EXECUTABLE)
     
