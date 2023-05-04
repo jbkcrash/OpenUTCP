@@ -1,6 +1,7 @@
 # Ignore object files and executables
 *.o
 *.out
+utcpEcho
 
 # Ignore project build directory
 build/
