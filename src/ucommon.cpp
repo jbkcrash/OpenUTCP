@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 
 unsigned short csum(unsigned short *buf, int nwords)
 {

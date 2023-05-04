@@ -13,7 +13,5 @@ Calculates the checksum for a given buffer of 16-bit words.
 
 @return The checksum as an unsigned short.
 */
-
-
 unsigned short csum(unsigned short *buf, int nwords);
 

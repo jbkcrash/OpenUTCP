@@ -1,9 +1,17 @@
-#include
-#include
-#include <arpa/inet.h>
+#include <iostream>
+#include <cstring>
 #include <sys/socket.h>
-#include <unistd.h>
+#include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netinet/if_ether.h>
+#include <net/if_arp.h>
+#include <netpacket/packet.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include "ucommon.hpp"
+#include "usockets.hpp"
 
 class EchoClient
 {
@@ -28,7 +36,7 @@ public:
         sock_ = create_userland_socket(ip_addr, port);
         if (sock_ == -1)
         {
-            std::cerr << \"Failed to create userland socket" << std::endl;
+            std::cerr << "Failed to create userland socket" << std::endl;
             return false;
         }
 
@@ -45,7 +53,7 @@ public:
         server_addr_.sin_port = htons(port);
         if (inet_pton(AF_INET, ip_addr.c_str(), &server_addr_.sin_addr) <= 0)
         {
-            std::cerr << \"Invalid IP address: " << ip_addr << std::endl;
+            std::cerr << "Invalid IP address: " << ip_addr << std::endl;
             disconnect();
             return false;
         }
@@ -53,7 +61,7 @@ public:
         // Connect to server
         if (::connect(sock_, (struct sockaddr *)&server_addr_, sizeof(server_addr_)) < 0)
         {
-            std::cerr << \"Failed to connect to server: " << strerror(errno) << std::endl;
+            std::cerr << "Failed to connect to server: " << strerror(errno) << std::endl;
             disconnect();
             return false;
         }
@@ -76,7 +84,6 @@ public:
         {
             std::cerr << "EchoClient not connected" << std::endl;
             return false;
-            \n
         }
 
         std::string message = "{\"command\": \"PING\"}";
@@ -96,7 +103,7 @@ public:
     {
         if (sock_ == -1)
         {
-            std::cerr << \"EchoClient not connected" << std::endl;
+            std::cerr << "EchoClient not connected" << std::endl;
             return "";
         }
 
@@ -106,7 +113,7 @@ public:
         int client_sock = accept(sock_, (struct sockaddr *)&client_addr, &client_len);
         if (client_sock == -1)
         {
-            std::cerr << \"Failed to accept incoming connection: " << strerror(errno) << std::endl;
+            std::cerr << "Failed to accept incoming connection: " << strerror(errno) << std::endl;
             disconnect();
             return "";
         }
@@ -116,7 +123,7 @@ public:
         int result = setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(flag));
         if (result == -1)
         {
-            std::cerr << \"Failed to disable Nagle algorithm: " << strerror(errno) << std::endl;
+            std::cerr << "Failed to disable Nagle algorithm: " << strerror(errno) << std::endl;
             disconnect();
             return "";
         }

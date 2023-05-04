@@ -4,7 +4,11 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <thread>
 #include "usockets.hpp"
+#include "ubinding.hpp"
+#include "arphandler.hpp"
+#include "uicmp.hpp"
 
 class Configuration
 {
@@ -12,15 +16,6 @@ public:
     void load_config()
     {
         // Load and parse configuration parameters
-    }
-};
-
-class ArpHandler
-{
-public:
-    void handle_arp()
-    {
-        // Handle ARP queries for the virtual IP
     }
 };
 
@@ -47,6 +42,7 @@ class SocketManager
 public:
     int create_socket()
     {
+        return 1;
         // Create userland socket based on requests
     }
 
@@ -60,22 +56,20 @@ int main()
 {
     Configuration config;
     config.load_config();
-    ArpHandler arp_handler;
+    ArpHandler arp_handler("ens33","192.168.78.131");
+    uICMP icmp_handler("ens33","192.168.78.131");
+
     Synchronization sync;
     Watchdog watchdog;
     SocketManager socket_manager;
 
-    // Create and bind the raw socket for ARP handling
-    int arp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-    if (arp_sock == -1)
-    {
-        std::cerr << "Failed to create raw socket" << std::endl;
-        return 1;
-    }
-
     // Start ARP handling thread
     std::thread arp_thread([&arp_handler]()
                            { arp_handler.handle_arp(); });
+    
+    // Start ICMP handling thread
+    std::thread icmp_thread([&icmp_handler]()
+                           { icmp_handler.handle_icmp(); });
 
     // Start synchronization thread
     std::thread sync_thread([&sync]()
@@ -116,7 +110,6 @@ int main()
     accept_inbound_connections(raw_sock, local_ip, local_port);
 
     close(raw_sock);
-    return 0;
-
+    
     return 0;
 }

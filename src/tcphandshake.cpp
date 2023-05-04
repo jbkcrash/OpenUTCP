@@ -6,8 +6,9 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include "ucommon.hpp"
 
-void outgoing_handle_tcp_handshake(int raw_sock, const std::string &dest_ip, uint16_t dest_port)
+void handle_tcp_handshake(int raw_sock, const std::string &dest_ip, uint16_t dest_port)
 {
     // Create an IP header
     struct ip ip_header;
